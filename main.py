@@ -3,14 +3,14 @@ import pygame
 
 BUTTON_COLOR_OFF = (100, 100, 150)
 BUTTON_COLOR_ON = (150, 150, 100)
-FPS = 60
+FPS = 120
 
 pygame.init()
 
 clock = pygame.time.Clock()
 
 display = pygame.display.set_mode((1050, 650))
-display.fill(color=(255, 255, 255))
+display.fill(color=(200, 200, 200))
 pygame.display.set_caption('Drawing digits')
 
 text_main = pygame.font.SysFont('arial', 20)
@@ -20,6 +20,11 @@ surf = pygame.Surface((28*15, 28*15))
 surf.fill((0, 0, 0))
 display.blit(surf, (50, 50))
 display.blit(text_surface, (185, 20))
+
+for i in range(0, 29):
+    pygame.draw.aaline(display, (255, 255, 255), [50 + 15 * i, 50], [50 + 15 * i, 470])
+    pygame.draw.aaline(display, (255, 255, 255), [50, 50 + 15 * i], [470, 50 + 15 * i])
+
 pygame.display.update()
 
 
@@ -56,6 +61,10 @@ def run_game():
 
             display.blit(text_button_clear_surface, (85, 515))
             display.blit(text_button_get_surface, (330, 515))
+
+            if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1 and 70 <= mouse[0] <= 450 and 70 <= mouse[1] <= 450:
+                pygame.draw.circle(display, (255, 255, 255), mouse, 20)
+
             pygame.display.update()
             clock.tick(FPS)
 

@@ -30,29 +30,19 @@ def new_surf():
         pygame.draw.aaline(display, (255, 255, 255), [50, 50 + 15 * i], [470, 50 + 15 * i])
 
 
-def compute_pixel(mat):
-    dic = {16777215: 0, 0: 0}
-    print(mat)
-    for i in range(15):
-        for j in range(15):
-            if mat[i][j] == 0:
-                dic[0] += 1
-            else:
-                dic[16777215] += 1
-    return dic[16777215]/225
-
-
 def one_pixel(arr):
-    array_pixel = [[True]*28 for i in range(28)]
+    array_pixel = []
     for i in range(28):
         row = arr[i*15:(i+1)*15, :]
+        s = []
         for j in range(28):
             el = row[:, j*15:(j+1)*15]
-            if compute_pixel(el) > 0.5:
-                array_pixel[i][j] = 1
+            if (np.sum(el)//16777215)/225 > 0.5:
+                s.append(1)
             else:
-                array_pixel[i][j] = 0
-    return array_pixel
+                s.append(0)
+        array_pixel.append(s)
+    return np.array(array_pixel)
 
 
 new_surf()
@@ -74,17 +64,17 @@ def run_game():
                 pygame.draw.rect(display, BUTTON_COLOR_ON, (50, 500, 150, 50))
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     new_surf()
+
             elif 320 < mouse[0] < 320 + 150 and 500 < mouse[1] < 500 + 50:
                 pygame.draw.rect(display, BUTTON_COLOR_ON, (320, 500, 150, 50))
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     ar = pygame.PixelArray(display)
                     ara = np.array(ar)
-                    ans = one_pixel(ara[50:470, 50:470])
+                    ans = one_pixel(ara[50:470, 50:470]).transpose()
                     for i in ans:
                         print(*i)
-                    print(len(ans))
-                    print(len(ans[0]))
                     ar.close()
+
             else:
                 pygame.draw.rect(display, BUTTON_COLOR_OFF, (50, 500, 150, 50))
                 pygame.draw.rect(display, BUTTON_COLOR_OFF, (320, 500, 150, 50))

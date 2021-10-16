@@ -1,6 +1,5 @@
 import pygame
 
-
 BUTTON_COLOR_OFF = (100, 100, 150)
 BUTTON_COLOR_ON = (150, 150, 100)
 FPS = 120
@@ -16,15 +15,19 @@ pygame.display.set_caption('Drawing digits')
 text_main = pygame.font.SysFont('arial', 20)
 text_surface = text_main.render('Нарисуйте цифру', True, (0, 0, 0))
 
-surf = pygame.Surface((28*15, 28*15))
-surf.fill((0, 0, 0))
-display.blit(surf, (50, 50))
-display.blit(text_surface, (185, 20))
 
-for i in range(0, 29):
-    pygame.draw.aaline(display, (255, 255, 255), [50 + 15 * i, 50], [50 + 15 * i, 470])
-    pygame.draw.aaline(display, (255, 255, 255), [50, 50 + 15 * i], [470, 50 + 15 * i])
+def new_surf():
+    surf = pygame.Surface((28 * 15, 28 * 15))
+    surf.fill((0, 0, 0))
+    display.blit(surf, (50, 50))
+    display.blit(text_surface, (185, 20))
 
+    for i in range(0, 29):
+        pygame.draw.aaline(display, (255, 255, 255), [50 + 15 * i, 50], [50 + 15 * i, 470])
+        pygame.draw.aaline(display, (255, 255, 255), [50, 50 + 15 * i], [470, 50 + 15 * i])
+
+
+new_surf()
 pygame.display.update()
 
 
@@ -47,9 +50,11 @@ def run_game():
 
             mouse = pygame.mouse.get_pos()
 
-            if 50 < mouse[0] < 50+150 and 500 < mouse[1] < 500+50:
+            if 50 < mouse[0] < 50 + 150 and 500 < mouse[1] < 500 + 50:
                 button_clear = pygame.draw.rect(display, BUTTON_COLOR_ON, (50, 500, 150, 50))
-            elif 320 < mouse[0] < 320+150 and 500 < mouse[1] < 500+50:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    new_surf()
+            elif 320 < mouse[0] < 320 + 150 and 500 < mouse[1] < 500 + 50:
                 button_get = pygame.draw.rect(display, BUTTON_COLOR_ON, (320, 500, 150, 50))
             else:
                 button_clear = pygame.draw.rect(display, BUTTON_COLOR_OFF, (50, 500, 150, 50))
@@ -62,7 +67,8 @@ def run_game():
             display.blit(text_button_clear_surface, (85, 515))
             display.blit(text_button_get_surface, (330, 515))
 
-            if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1 and 70 <= mouse[0] <= 450 and 70 <= mouse[1] <= 450:
+            if event.type == pygame.MOUSEMOTION and event.buttons[0] == 1 and 70 <= mouse[0] <= 450 and 70 <= mouse[
+                1] <= 450:
                 pygame.draw.circle(display, (255, 255, 255), mouse, 20)
 
             pygame.display.update()

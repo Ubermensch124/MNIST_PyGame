@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import random as rd
 import csv
 import numpy as np
@@ -7,22 +8,37 @@ import numdifftools as nd
 В этом словаре хранится информация о всех параметрах нашей уже обученной нейронной сети
 """
 MODEL_INFO = {'w': np.array(), 'b': np.array()}
+MODEL_ARCHITECTURE = [784, 16, 10]
 
 
 class Model:
-    def __init__(self, input_layer: str):
-        self.name = input_layer
+    """
+    Класс полносвязного перцептрона
+    """
+    def __init__(self, layers: list[int], ready_set=None):
+        if ready_set:
+            pass
+        else:
+            count_layers = len(layers) - 1
+            weights = np.array([[]*count_layers])
+            bias = np.array([[]*count_layers])
+            for i in range(count_layers):
+                w = np.array([rd.random() for _ in range(layers[i]*layers[i+1])])
+                weights[i] = w
+                b = np.array([rd.random() for _ in range(layers[i+1])])
+                bias[i] = b
+            self.bias = bias
+            self.weights = weights
+            self.output = np.array()
 
-    def input_layer(self):
+    def forward(self, input_layer: list[float]) -> list[float]:
         pass
 
-    @staticmethod
-    def forward():
+    def update_weights(self, number_of_layer: int) -> None:
         pass
 
-    # метод для прогона значений слева-направо
-    # метод для рандомной инициализации параметров
-    # методы возврата любых значений на каждом слое
+    def update_bias(self, number_of_layer: int) -> None:
+        pass
 
 
 def softmax():
@@ -64,13 +80,16 @@ def prediction_model(input_array: list[int]) -> tuple[int, float]:
     return digit, probability
 
 
-def train_model():
+def train_model() -> None:
     """
-    Сделана
     :return:
     """
-    pass
+    nn = Model(MODEL_ARCHITECTURE)
+    epochs = 5
+    fit_speed = 0.05
+    for epoch in range(epochs):
+        pass
 
-
-nn = Model('784x16x10')
+    # проверяем на тестовых данных
+    # записываем параметры в словарь
 

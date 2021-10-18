@@ -1,6 +1,6 @@
+from neural_net import prediction_model
 import pygame
 import numpy as np
-from collections import Counter
 
 
 BUTTON_COLOR_OFF = (100, 100, 150)
@@ -69,11 +69,12 @@ def run_game():
                 pygame.draw.rect(display, BUTTON_COLOR_ON, (320, 500, 150, 50))
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     ar = pygame.PixelArray(display)
+                    ar.close()
                     ara = np.array(ar)
                     ans = one_pixel(ara[50:470, 50:470]).transpose()
-                    for i in ans:
-                        print(*i)
-                    ar.close()
+                    ans = ans.flatten()
+                    dig, prob = prediction_model(ans)
+                    # здесь будет функция отрисовки ответа
 
             else:
                 pygame.draw.rect(display, BUTTON_COLOR_OFF, (50, 500, 150, 50))

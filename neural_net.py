@@ -18,6 +18,7 @@ class Model:
     """
     Класс полносвязного перцептрона
     """
+
     def __init__(self, layers: list[int], ready_set=None):
         if ready_set:
             self.bias = ready_set['b']
@@ -29,7 +30,7 @@ class Model:
             bias = {}
             for i in range(0, count_layers):
                 w = np.array([rd.random() for _ in range(layers[i] * layers[i + 1])])
-                np.reshape(w, (layers[i], layers[i+1]))    # reshape(784, 16).transpose()
+                np.reshape(w, (layers[i], layers[i + 1]))  # reshape(784, 16).transpose()
                 np.transpose(w)
                 weights[f'w{i}'] = w
                 b = np.array([rd.random() for _ in range(layers[i + 1])])
@@ -48,6 +49,30 @@ class Model:
             else:
                 input_layer = activation_func(z.transpose())
                 self.layers[f'h{i}'] = input_layer
+
+    def back_propagation(self, target):
+        corzina = np.array([])
+        for_next_layer = np.array([])
+        for i in range(0, np.size(self.layers['output_layer'])):
+            const = 2 * 1 / np.size(self.layers['output_layer']) * (target[i] - self.layers['output_layer'][i]) * (-1) * \
+                    self.layers['output_layer'][i] * (1 - self.layers['output_layer'][i])
+            np.append(for_next_layer, const)
+            for j in range(0, np.size(self.layers['h1'])):
+                np.append(corzina, self.layers['h1'][j] * const)
+        np.reshape(corzina, (10, 16))
+
+        # теперь считаем для скрытого слоя
+        corz = np.array([])
+        for i in range(0, np.size(self.layers['h1'])):
+            const = self.layers['h1'][i] * (1 - self.layers['h1'][i])
+            summa = 0
+            for j in range(0, np.size(self.layers['output_layer'])):
+                element = for_next_layer[j]
+                element *= self.weights['w1'][j, i]
+                summa += element
+            const *= summa
+            for k in range(0, np.size(self.layers['input_layer'])):
+                np.append(corz, self.layers['input_layer'][k] * const)
 
     def update_weights(self, number_of_layer: int) -> None:
         pass

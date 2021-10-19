@@ -7,7 +7,10 @@ import numdifftools as nd
 """
 В этом словаре хранится информация о всех параметрах нашей уже обученной нейронной сети
 """
-MODEL_INFO = {'w': np.array(), 'b': np.array()}
+MODEL_INFO = {
+    'w': {'w0': np.array([0.15, 0.20, 0.25, 0.40]), 'w1': np.array([0.40, 0.45, 0.50, 0.55])},
+    'b': {'b0': np.array([0.35, 0.35]), 'b1': np.array([0.35, 0.35])}
+}
 MODEL_ARCHITECTURE = [784, 16, 10]
 
 
@@ -17,22 +20,34 @@ class Model:
     """
     def __init__(self, layers: list[int], ready_set=None):
         if ready_set:
-            pass
+            self.bias = ready_set['b']
+            self.weights = ready_set['w']
+            self.layers = {}
         else:
             count_layers = len(layers) - 1
-            weights = np.array([[]*count_layers])
-            bias = np.array([[]*count_layers])
-            for i in range(count_layers):
-                w = np.array([rd.random() for _ in range(layers[i]*layers[i+1])])
-                weights[i] = w
-                b = np.array([rd.random() for _ in range(layers[i+1])])
-                bias[i] = b
+            weights = {}
+            bias = {}
+            for i in range(0, count_layers):
+                w = np.array([rd.random() for _ in range(layers[i] * layers[i + 1])])
+                np.reshape(w, (layers[i], layers[i+1]))    # reshape(784, 16).transpose()
+                np.transpose(w)
+                weights[f'w{i}'] = w
+                b = np.array([rd.random() for _ in range(layers[i + 1])])
+                bias[f'b{i}'] = b
             self.bias = bias
             self.weights = weights
-            self.output = np.array()
+            self.layers = {}
 
-    def forward(self, input_layer: list[float]) -> list[float]:
-        pass
+    def forward(self, input_layer):
+        self.layers['input_layer'] = input_layer
+        for i in range(0, len(self.weights)):
+            z = np.dot(self.weights[f'w{i}'], input_layer.transpose()) + self.bias[f'b{i}'].transpose()
+            if i == len(self.weights):
+                out = activation_func(z.transpose())
+                self.layers['output_layer'] = softmax(out)
+            else:
+                input_layer = activation_func(z.transpose())
+                self.layers[f'h{i}'] = input_layer
 
     def update_weights(self, number_of_layer: int) -> None:
         pass
@@ -41,28 +56,32 @@ class Model:
         pass
 
 
-def softmax():
+def softmax(a: list[float]):
     """
-
+    SOFTMAX
     :return:
     """
-    pass
+    s = np.exp(a)
+    res = np.array(list(map(lambda x: round(x / np.sum(s), 2), s)))
+    return res
 
 
-def loss_function():
+def loss_function(our: list[float], their: list[float]):
     """
-
+    MSE
     :return:
     """
-    pass
+    cost = 1 / len(our) * np.sum(np.array([(our[i] - their[i]) ** 2 for i in range(len(our))]))
+    return cost
 
 
-def activation_func():
+def activation_func(a):
     """
-
+    RELU
     :return:
     """
-    pass
+    new_a = np.array(list(map(lambda x: max(0.0, x), a)))
+    return new_a
 
 
 def prediction_model(input_array: list[int]) -> tuple[int, float]:
@@ -93,3 +112,5 @@ def train_model() -> None:
     # проверяем на тестовых данных
     # записываем параметры в словарь
 
+
+print(activation_func(np.array([1.3, 5.1, 2.2, 0.1, 1.1])))
